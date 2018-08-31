@@ -45,13 +45,14 @@ export default class App extends Component {
   };
 
   componentWillMount() {
-    NetInfo.getConnectionInfo().then(connectionInfo => {
-      console.warn(
-        'Initial, type: ' +
-          connectionInfo.type +
-          ', effectiveType: ' +
-          connectionInfo.effectiveType
-      );
+    NetInfo.getConnectionInfo().then(async connectionInfo => {
+      if (connectionInfo.type === 'wifi') {
+        const resp = await axios.get(RASPBERRY_PI_URL);
+        const value = 10 * parseInt(resp.data);
+        this.setState(() => ({ value }));
+      } else {
+        console.warn('You are not connected to wifi');
+      }
     });
   }
 
